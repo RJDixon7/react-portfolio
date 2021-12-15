@@ -21,7 +21,7 @@ export default class PortfolioForm extends Component {
             logo: "",
             editMode: false,
             apiUrl: "https://rileydixon.devcamp.space/portfolio/portfolio_items",
-            apiAction: 'post'
+            apiAction: "post"
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -63,7 +63,7 @@ export default class PortfolioForm extends Component {
             url: url || "",
             editMode: true,
             apiUrl: `https://rileydixon.devcamp.space/portfolio/portfolio_items/${id}`,
-            apiAction: 'post',
+            apiAction: "patch",
             thumb_image: thumb_image_url || "",
             banner_image: banner_image_url || "",
             logo: logo_url || ""
@@ -160,7 +160,7 @@ export default class PortfolioForm extends Component {
                     logo: "",
                     editMode: false,
                     apiUrl: "https://rileydixon.devcamp.space/portfolio/portfolio_items",
-                    apiAction: 'post'
+                    apiAction: "post"
                 });
 
                 [this.thumbRef, this.bannerRef, this.logoRef].forEach(ref => {
