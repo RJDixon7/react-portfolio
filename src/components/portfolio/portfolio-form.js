@@ -18,7 +18,10 @@ export default class PortfolioForm extends Component {
             url: "",
             thumb_image: "",
             banner_image: "",
-            logo: ""
+            logo: "",
+            editMode: false,
+            apiUrl: "https://rileydixon.devcamp.space/portfolio/portfolio_items",
+            apiAction: 'post'
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -37,7 +40,7 @@ export default class PortfolioForm extends Component {
 
     componentDidUpdate() {
         if (Object.keys(this.props.portfolioToEdit).length > 0) {
-          const {
+        const {
             id,
             name,
             description,
@@ -47,17 +50,23 @@ export default class PortfolioForm extends Component {
             thumb_image_url,
             banner_image_url,
             logo_url
-          } = this.props.portfolioToEdit;
+        } = this.props.portfolioToEdit;
     
-          this.props.clearPortfolioToEdit();
+        this.props.clearPortfolioToEdit();
     
-          this.setState({
+        this.setState({
             id: id,
             name: name || "",
             description: description || "",
             category: category || "eCommerce",
             position: position || "",
-            url: url || ""
+            url: url || "",
+            editMode: true,
+            apiUrl: `https://rileydixon.devcamp.space/portfolio/portfolio_items/${id}`,
+            apiAction: 'post',
+            thumb_image: thumb_image_url || "",
+            banner_image: banner_image_url || "",
+            logo: logo_url || ""
           });
         }
       }
@@ -127,14 +136,18 @@ export default class PortfolioForm extends Component {
     }
 
     handleSubmit(event) {
-        axios
-            .post(
-                "https://rileydixon.devcamp.space/portfolio/portfolio_items", 
-                this.buildForm(), 
-                { withCredentials: true }
-            )
+        axios({
+            method: this.state.apiAction,
+            url: this.state.apiUrl,
+            data: this.buildForm(),
+            withCredentials: true
+        })
             .then(response => {
-                this.props.handleSuccessfulFormSubmission(response.data.portfolio_item);
+                if (this.state.editMode) {
+                    this.props.handleEditFormSubmission();
+                } else {
+                this.props.handleNewFormSubmission(response.data.portfolio_item);
+                }
 
                 this.setState({
                     name: "",
@@ -144,7 +157,10 @@ export default class PortfolioForm extends Component {
                     url: "",
                     thumb_image: "",
                     banner_image: "",
-                    logo: ""
+                    logo: "",
+                    editMode: false,
+                    apiUrl: "https://rileydixon.devcamp.space/portfolio/portfolio_items",
+                    apiAction: 'post'
                 });
 
                 [this.thumbRef, this.bannerRef, this.logoRef].forEach(ref => {
@@ -211,14 +227,28 @@ export default class PortfolioForm extends Component {
                 </div>
 
                 <div className="image-uploaders">
-                    <DropzoneComponent
-                        ref={this.thumbRef}
-                        config={this.componentConfig()}
-                        djsConfig={this.djsConfig()}
-                        eventHandlers={this.handleThumbDrop()}
-                    >
-                        <div className="dz-message">Thumbnail</div>
-                    </DropzoneComponent>
+                    {this.state.thumb_image && this.state.editMode ? (
+                        <div className="portfolio-manager-image-wrapper">
+                        <img src={this.state.thumb_image} />
+                        </div>
+                    ) : (
+                        <DropzoneComponent
+                            ref={this.thumbRef}
+                            config={this.componentConfig()}
+                            djsConfig={this.djsConfig()}
+                            eventHandlers={this.handleThumbDrop()}
+                        >
+                            <div className="dz-message">Thumbnail</div>
+                        </DropzoneComponent>
+                        )}
+
+                    {this.state.banner_image && this.state.editMode ? (
+                        <div className="portfolio-manager-image-wrapper">
+                        <img src={this.state.banner_image} />
+                        </div>
+                    ) : (
+
+
 
                     <DropzoneComponent
                         ref={this.bannerRef}
@@ -228,6 +258,14 @@ export default class PortfolioForm extends Component {
                     >
                         <div className="dz-message">Banner</div>
                     </DropzoneComponent>
+                    )}
+
+
+                    {this.state.logo_image && this.state.editMode ? (
+                        <div className="portfolio-manager-image-wrapper">
+                        <img src={this.state.logo_image} />
+                        </div>
+                    ) : (
 
                     <DropzoneComponent
                         ref={this.logoRef}
@@ -237,6 +275,7 @@ export default class PortfolioForm extends Component {
                     >
                         <div className="dz-message">Logo</div>
                     </DropzoneComponent>
+                    )}
 
                 </div>
 
