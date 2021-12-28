@@ -29,7 +29,7 @@ class Blog extends Component {
       this.setState({
           blogModalIsOpen: false,
           blogItems: [blog].concat(this.state.blogItems)
-      })
+      });
   }
 
   handleModalClose() {
@@ -66,17 +66,22 @@ class Blog extends Component {
       });
 
       axios
-        .get(`https://rileydixon.devcamp.space/portfolio/portfolio_blogs?page=${this.state.currentPage}`, {
+        .get(`https://rileydixon.devcamp.space/portfolio/portfolio_blogs?page=${this
+            .state.currentPage}`,
+        {
           withCredentials: true 
-        }).then(response => {
+        }
+        )
+        .then(response => {
             console.log("getting", response.data);
             this.setState({
                 blogItems:  this.state.blogItems.concat(response.data.portfolio_blogs),
                 totalCount: response.data.meta.total_records,
                 isLoading: false
-            })
-        }).catch(error => {
-            console.log("getBlogItems", error)
+            });
+        })
+        .catch(error => {
+            console.log("getBlogItems error", error)
         });
   }
 
@@ -102,11 +107,13 @@ class Blog extends Component {
                     modalIsOpen={this.state.blogModalIsOpen}
                 />
 
-                <div className="new-blog-link">
-                    <a onClick={this.handleNewBlogClick}>
-                        Open Modal!
-                    </a>
-                </div>
+                {this.props.loggedInStatus === "LOGGED_IN" ? (
+                    <div className="new-blog-link">
+                        <a onClick={this.handleNewBlogClick}>
+                            <FontAwesomeIcon icon="plus-circle" />
+                        </a>
+                    </div>
+                ) : null}
 
 
                 <div className="content-container">{blogRecords}</div>
