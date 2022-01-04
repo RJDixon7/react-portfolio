@@ -275,9 +275,6 @@ export default class PortfolioForm extends Component {
                         </div>
                         </div>
                     ) : (
-
-
-
                     <DropzoneComponent
                         ref={this.bannerRef}
                         config={this.componentConfig()}
